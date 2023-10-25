@@ -1,16 +1,17 @@
 import frontMatter from 'front-matter'
-import {marked} from 'marked'
-import {Plugin} from 'vite'
-
+import { marked, MarkedOptions } from 'marked'
+import { Plugin } from 'vite'
+import { parse ,HTMLElement} from 'node-html-parser'
 
 export interface PluginOptions {
-  markedOptions?: marked.options
+  markedOptions?: MarkedOptions
   withOrigin?: boolean
 }
 
-export interface Metadata {
-  attributes: {}
+export interface Metadata<TAttributes extends {} = {}> {
+  attributes: TAttributes
   body: string
+  outline: string[]
 }
 
 export interface Result extends Metadata {
@@ -43,13 +44,36 @@ export default (options: PluginOptions): Plugin => {
       if (!id.endsWith('.md')) return null
       if (!frontMatter.test(src)) return null
 
-      const {attributes, body}: Metadata = frontMatter(src)
+      const {attributes, body} = frontMatter<Metadata>(src)
 
       let result: Result = {
         attributes,
+        outline: [],
         body: marked.parse(body)
       }
-
+      let outline = []
+      let currentOutline = undefined
+      let currentElements = []
+      parse(result.body).childNodes.forEach( (v)=>{
+          if(v instanceof HTMLElement &&  v.rawTagName==='h2') {
+              if(currentOutline) {
+                  currentOutline.body = currentElements.map(e=>e.outerHTML).join(`\n`)
+                  outline.push(currentOutline)
+              }
+              currentOutline = 
+                  {
+                      title: v.text, 
+                  }
+              currentElements = []
+              return
+          }
+          currentElements.push(v)
+      })
+      if(currentOutline) {
+          currentOutline.body = currentElements.map(e=>e.outerHTML).join(`\n`)
+          outline.push(currentOutline)
+      }
+      result.outline = outline
       if (options.withOrigin) {
         result = {
           ...result,
