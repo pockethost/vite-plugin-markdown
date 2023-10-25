@@ -11,8 +11,8 @@
     "front-matter"
   ],
   "scripts": {
-    "fix": "echo { \"type\": \"commonjs\" } > dist/cjs/package.json && echo { \"type\": \"module\" } > dist/mjs/package.json",
-    "build": "rm -fr dist/* && tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && npm run fix",
+    "fix": "echo '{ \"type\": \"commonjs\" }' > dist/cjs/package.json && echo '{ \"type\": \"module\" }' > dist/mjs/package.json",
+    "build": "rm -fr dist/* ; tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && npm run fix",
     "prepare": "npm run build"
   },
   "main": "dist/cjs/index.js",
