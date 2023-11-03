@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "fix": "echo '{ \"type\": \"commonjs\" }' > dist/cjs/package.json && echo '{ \"type\": \"module\" }' > dist/mjs/package.json",
-    "build": "rm -fr dist/* ; tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && npm run fix",
+    "build": "rimraf dist/* ; tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && npm run fix",
     "prepare": "npm run build"
   },
   "main": "dist/cjs/index.js",
@@ -35,6 +35,7 @@
     "@typescript-eslint/parser": "^5.6.0",
     "eslint": "^8.4.1",
     "node-html-parser": "^6.1.10",
+    "rimraf": "^5.0.5",
     "shx": "^0.3.3",
     "typescript": "^4.5.3",
     "vite": "^2.7.1"
